@@ -42,7 +42,7 @@ public class SecurityConfig {
 		return httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/auth/**").permitAll().anyRequest().authenticated())
+						auth -> auth.requestMatchers("/auth/**","/api/**").permitAll().anyRequest().authenticated())
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessHandler(new LogoutSuccessHandler() {
 
 					@Override

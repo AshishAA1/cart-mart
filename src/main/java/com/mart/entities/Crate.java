@@ -8,12 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.Version;
 
 @Entity(name = "crates")
 public class Crate {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.UUID)
 	@Column(nullable = false)
 	private String crateId;
 
@@ -50,6 +51,9 @@ public class Crate {
 	@Lob
 	@Column(name="crate_img")
 	private byte[] crateImgbyteArray;
+	
+	@Version
+    private Integer version;
 
 	public Crate() {
 
@@ -71,6 +75,24 @@ public class Crate {
 		this.crateMeasurment = crateMeasurment;
 		this.crateImgPath = crateImgPath;
 		this.crateImgbyteArray = crateImgbyteArray;
+	}
+	
+	public Crate(String crateId, String crateName, String crateDescription, Integer cratePrice, String crateColor,
+			String sellerInfo, String address, String state, String phoneNo, String crateMeasurment,
+			String crateImgPath) {
+		
+		this.crateId = crateId;
+		this.crateName = crateName;
+		this.crateDescription = crateDescription;
+		this.cratePrice = cratePrice;
+		this.crateColor = crateColor;
+		this.sellerInfo = sellerInfo;
+		this.address = address;
+		this.state = state;
+		this.phoneNo = phoneNo;
+		this.crateMeasurment = crateMeasurment;
+		this.crateImgPath = crateImgPath;
+		
 	}
 
 	public String getCrateId() {
@@ -167,6 +189,16 @@ public class Crate {
 
 	public void setCrateImgbyteArray(byte[] crateImgbyteArray) {
 		this.crateImgbyteArray = crateImgbyteArray;
+	}
+	
+	
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 	@Override
