@@ -1,6 +1,7 @@
 package com.mart.controller;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +58,44 @@ public class CratesController {
 		
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(crateService.getAllCrates());
-		
-		
+				
 	}
 	
-	
-	
-	
-	
-	
+	@PostMapping(value ="/updateCrateById", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> updateCrateById(@RequestPart("crate") Crate crate,
+			@RequestPart("image") MultipartFile imageFile) throws IOException {
+		Crate crateDb = null;
+
+		Optional<Crate> crateResponse = null;
+		if (crate.getCrateId() != null) {
+
+			crateResponse = crateService.getCrateById(crate.getCrateId());
+
+			if (crateResponse.isPresent()) {
+				crateDb = crateResponse.get();
+
+				crateDb.setAddress(crate.getAddress() != null ? crate.getAddress() : crateDb.getAddress());
+				crateDb.setCrateColor(crate.getCrateColor() != null ? crate.getCrateColor() : crateDb.getCrateColor());
+				crateDb.setCrateDescription(crate.getCrateDescription() != null ? crate.getCrateDescription()
+						: crateDb.getCrateDescription());
+				crateDb.setCrateImgbyteArray(
+						!imageFile.isEmpty() ? imageFile.getBytes() : crateDb.getCrateImgbyteArray());
+				crateDb.setCrateImgPath(
+						crate.getCrateImgPath() != null ? crate.getCrateImgPath() : crateDb.getCrateImgPath());
+				crateDb.setCrateMeasurment(
+						crate.getCrateMeasurment() != null ? crate.getCrateMeasurment() : crateDb.getCrateMeasurment());
+				crateDb.setCrateName(crate.getCrateName() != null ? crate.getCrateName() : crateDb.getCrateName());
+				crateDb.setCratePrice(crate.getCratePrice() != null ? crate.getCratePrice() : crateDb.getCratePrice());
+				crateDb.setPhoneNo(crate.getPhoneNo() != null ? crate.getPhoneNo() : crateDb.getPhoneNo());
+				crateDb.setSellerInfo(crate.getSellerInfo() != null ? crate.getSellerInfo() : crateDb.getSellerInfo());
+				crateDb.setState(crate.getState() != null ? crate.getState() : crateDb.getState());
+				crateDb.setVersion(crate.getVersion() != null ? crate.getVersion() : crateDb.getVersion());
+			}
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(crateService.saveCrate(crateDb));
+
+	}
 	
 	
 }
