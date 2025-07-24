@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mart.entities.Crate;
 import com.mart.repository.CrateRepo;
+import com.mart.service.CrateService;
 
 @RestController
 @RequestMapping("/api/crates")
@@ -25,6 +27,9 @@ public class CratesController {
 
 	@Autowired
 	private CrateRepo crateRepository;
+	
+	@Autowired
+	private CrateService crateService;
 
 	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> saveCrateWithImage(@RequestPart("crate") Crate crate,
@@ -32,14 +37,12 @@ public class CratesController {
 
 		try {
 			if (!imageFile.isEmpty()) {
-				
-				Crate dbCrate = crateRepository.findById(crate.getCrateId())
-				        .orElseThrow(() -> new RuntimeException("Crate not found"));
+							
 				crate.setCrateImgbyteArray(imageFile.getBytes());
-				crate.setCrateId(UUID.randomUUID().toString());
+				//crate.setCrateId(UUID.randomUUID().toString());
 				//crate.setVersion(0);
 			}
-			Crate savedCrate = crateRepository.save(crate);
+			Crate savedCrate = crateService.saveCrate(crate);
 			return ResponseEntity.ok(savedCrate);
 
 		} catch (IOException e) {
@@ -47,4 +50,22 @@ public class CratesController {
 					.body("Failed to upload crate: " + e.getMessage());
 		}
 	}
+	
+	@GetMapping(value = "/getCrates")
+	public ResponseEntity<?> getAllCrates(){
+		
+		
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(crateService.getAllCrates());
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
