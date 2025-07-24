@@ -14,9 +14,9 @@ import jakarta.persistence.Version;
 public class Crate {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false)
-	private String crateId;
+	private Long crateId;
 
 	@Column(name="crateName")
 	private String crateName;
@@ -49,17 +49,18 @@ public class Crate {
 	private String crateImgPath;
 
 	@Lob
-	@Column(name="crate_img")
-	private byte[] crateImgbyteArray;
+	@Column(name="crate_img", columnDefinition = "LONGBLOB")
+	private byte[] crateImg;
 	
 	@Version
+	@Column(name="version")
     private Integer version;
 
 	public Crate() {
 
 	}
 
-	public Crate(String crateId, String crateName, String crateDescription, Integer cratePrice, String crateColor,
+	public Crate(Long crateId, String crateName, String crateDescription, Integer cratePrice, String crateColor,
 			String sellerInfo, String address, String state, String phoneNo, String crateMeasurment,
 			String crateImgPath, byte[] crateImgbyteArray) {
 		super();
@@ -74,10 +75,10 @@ public class Crate {
 		this.phoneNo = phoneNo;
 		this.crateMeasurment = crateMeasurment;
 		this.crateImgPath = crateImgPath;
-		this.crateImgbyteArray = crateImgbyteArray;
+		this.crateImg = crateImg;
 	}
 	
-	public Crate(String crateId, String crateName, String crateDescription, Integer cratePrice, String crateColor,
+	public Crate(Long crateId, String crateName, String crateDescription, Integer cratePrice, String crateColor,
 			String sellerInfo, String address, String state, String phoneNo, String crateMeasurment,
 			String crateImgPath) {
 		
@@ -95,11 +96,11 @@ public class Crate {
 		
 	}
 
-	public String getCrateId() {
+	public Long getCrateId() {
 		return crateId;
 	}
 
-	public void setCrateId(String crateId) {
+	public void setCrateId(Long crateId) {
 		this.crateId = crateId;
 	}
 
@@ -184,11 +185,11 @@ public class Crate {
 	}
 
 	public byte[] getCrateImgbyteArray() {
-		return crateImgbyteArray;
+		return crateImg;
 	}
 
 	public void setCrateImgbyteArray(byte[] crateImgbyteArray) {
-		this.crateImgbyteArray = crateImgbyteArray;
+		this.crateImg = crateImgbyteArray;
 	}
 	
 	
@@ -207,7 +208,7 @@ public class Crate {
 				+ ", cratePrice=" + cratePrice + ", crateColor=" + crateColor + ", sellerInfo=" + sellerInfo
 				+ ", address=" + address + ", state=" + state + ", phoneNo=" + phoneNo + ", crateMeasurment="
 				+ crateMeasurment + ", crateImgPath=" + crateImgPath + ", crateImgbyteArray="
-				+ Arrays.toString(crateImgbyteArray) + "]";
+				+ Arrays.toString(crateImg) + "]";
 	}
 
 }
