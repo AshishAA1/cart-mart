@@ -1,6 +1,7 @@
 package com.mart.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,4 +30,8 @@ public class CrateService {
 		return crateRepo.findAll();
 	}
 
+	public Optional<Crate> getCrateById(Long id) {
+		
+		return Optional.ofNullable(crateRepo.findById(id).orElse(null));
+	}
 }
