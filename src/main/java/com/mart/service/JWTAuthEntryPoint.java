@@ -30,6 +30,9 @@ public class JWTAuthEntryPoint extends OncePerRequestFilter {
 
 	@Autowired
 	private HandlerExceptionResolver handlerExceptionResolver;
+	
+	@Autowired
+	private TokenBlacklist tokenBlacklist;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -47,6 +50,14 @@ public class JWTAuthEntryPoint extends OncePerRequestFilter {
 
 		try {
 			final String jwtToken = authHeader.substring(7);
+			
+			//check if toke is blacklisted 
+			if(tokenBlacklist.isBlacklisted(jwtToken)) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	            response.getWriter().write("Token has been blacklisted.");
+	            return;
+			}
+			
 			final String userEmail = service.extractUserName(jwtToken);
 
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();

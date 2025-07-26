@@ -42,16 +42,8 @@ public class SecurityConfig {
 		return httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/auth/**","/api/**").permitAll().anyRequest().authenticated())
-				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessHandler(new LogoutSuccessHandler() {
-
-					@Override
-					public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-							Authentication authentication) throws IOException, ServletException {
-						response.setStatus(HttpServletResponse.SC_OK);
-
-					}
-				})).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+						auth -> auth.requestMatchers("/auth/**").permitAll().anyRequest().authenticated())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtAuthEntryPoint, UsernamePasswordAuthenticationFilter.class).build();
 	}
