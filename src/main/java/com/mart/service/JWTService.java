@@ -19,7 +19,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTService {
 
-	private static String secretKey = "YUhSMGNITTZMeTkzWldKaGRHVXRhRzkzZEM1amIyMGlhWE1pTkdjdE9TNWpiMjA9"; //
+	private static String SECRET_KEY = "YUhSMGNITTZMeTkzWldKaGRHVXRhRzkzZEM1amIyMGlhWE1pTkdjdE9TNWpiMjA9"; //
 
 	private static long expiryTime = 360000; // 10 minutes
 
@@ -80,7 +80,7 @@ public class JWTService {
 		return extractExpiration(token).before(new Date());
 	}
 	
-	private Date extractExpiration(String token) {
+	public Date extractExpiration(String token) {
 		
 		return extractClaims(token, Claims::getExpiration);
 	}
@@ -88,9 +88,20 @@ public class JWTService {
 
 	private static Key getSignKey() {
 		
-		byte [] keyByte = Decoders.BASE64.decode(secretKey);
+		byte [] keyByte = Decoders.BASE64.decode(SECRET_KEY);
 		
 		return Keys.hmacShaKeyFor(keyByte);
+	}
+
+	public long getRemainingValidity(String token) {
+		Claims claims = Jwts
+				.parser()
+				.setSigningKey(SECRET_KEY)
+				.parseClaimsJws(token)
+				.getBody();
+		Date expiration = claims.getExpiration();
+		long now = System.currentTimeMillis();
+		return expiration.getTime() - now;
 	}
 
 }

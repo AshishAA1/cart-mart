@@ -1,15 +1,21 @@
 package com.mart.controller;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.mart.dto.LoginDTO;
 import com.mart.entities.Users;
@@ -63,22 +69,27 @@ public class UserController {
 		return ResponseEntity.ok(users);
 	}
 	
-	@PostMapping("/logout")
+	@PostMapping("/auth/logout")
 	@CrossOrigin(origins = "http://localhost:4200")
-	public ResponseEntity<?> logout(HttpServletRequest request) {
-	    String authHeader = request.getHeader("Authorization");
+	public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeaders) {
+		
+		if(authHeaders ==null || !authHeaders.startsWith("Bearer")){
+			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Missing token.");
+		}
+		
+		String token = authHeaders.substring(7);
+		java.util.Date expiry = jwtService.extractExpiration(token); // method you must have
+	    LocalDateTime expiryDate = expiry.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-	    if (authHeader != null && authHeader.startsWith("Bearer ")) {
-	        String token = authHeader.substring(7);
-	        tokenBlacklist.blacklist(token);
-	    }
-	    Cookie cookie = new Cookie("token", null);
-	    cookie.setHttpOnly(true);
-	    cookie.setPath("/");
-	    cookie.setMaxAge(0); // expire immediately
-	    
-
-	    return ResponseEntity.ok("Logged out");
+	    tokenBlacklist.blacklist(token, expiryDate);
+	   // tokenBlacklist.blacklist(jwtToken);
+	    return ResponseEntity.ok("Logged out successfully.");
+	}
+	
+	@Scheduled(cron = "0 0 * * * *") // Every hour
+	public void purgeExpiredTokens() {
+		tokenBlacklist.cleanExpiredTokens();
+		System.out.println("tokens deletion executed every minute at: " + new java.util.Date());
 	}
 
 }

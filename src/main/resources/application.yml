@@ -13,3 +13,11 @@ spring:
       show-sql: true
    application:
       name: Cart-Mart
+   redis:
+      host: 127.0.0.1
+      port: 6379
+      ssl:
+         enabled: false
+   cache:
+      type: redis
+            
