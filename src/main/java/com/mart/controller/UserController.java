@@ -86,7 +86,7 @@ public class UserController {
 	    return ResponseEntity.ok("Logged out successfully.");
 	}
 	
-	@Scheduled(cron = "0 * * * * *") // Every hour
+	@Scheduled(cron = "0 0 * * * *") // Every hour
 	public void purgeExpiredTokens() {
 		tokenBlacklist.cleanExpiredTokens();
 		System.out.println("tokens deletion executed every minute at: " + new java.util.Date());
